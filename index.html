@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pomodoro Timer</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&family=Nunito:wght@400;600;700&display=swap');
+
+  :root {
+    --bg: #fff5f7;
+    --surface: #ffffff;
+    --work: oklch(0.62 0.19 6);
+    --work-light: oklch(0.88 0.056 6);
+    --rest: oklch(0.62 0.15 215);
+    --rest-light: oklch(0.88 0.045 215);
+    --text: oklch(0.32 0.02 6);
+    --sub: oklch(0.52 0.03 6);
+    --ring-bg: oklch(0.92 0.02 6);
+    --radius: 24px;
+    --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', 'Noto Sans KR', 'Noto Sans SC', sans-serif;
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 20% 80%, oklch(0.88 0.056 6 / 0.35) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, oklch(0.88 0.045 215 / 0.30) 0%, transparent 50%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text);
+    user-select: none;
+  }
+
+  .container {
+    background: oklch(1 0 0 / 0.75);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 40px;
+    padding: 48px 40px 40px;
+    width: min(420px, 94vw);
+    box-shadow:
+      0 1px 2px oklch(0 0 0 / 0.04),
+      0 4px 16px oklch(0 0 0 / 0.06),
+      0 16px 48px oklch(0 0 0 / 0.08);
+    text-align: center;
+    position: relative;
+  }
+
+  /* 언어 선택기 */
+  .lang-switcher {
+    position: absolute;
+    top: 20px;
+    right: 24px;
+    display: flex;
+    gap: 4px;
+  }
+
+  .lang-btn {
+    background: none;
+    border: 1.5px solid transparent;
+    border-radius: 10px;
+    padding: 6px 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--sub);
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+
+  .lang-btn:hover {
+    background: var(--ring-bg);
+    color: var(--text);
+  }
+
+  .lang-btn.active {
+    background: var(--work-light);
+    color: var(--work);
+    border-color: var(--work);
+  }
+
+  /* 귀여운 캐릭터 */
+  .mascot {
+    font-size: 64px;
+    line-height: 1;
+    margin-bottom: 8px;
+    margin-top: 8px;
+    animation: mascot-bounce 2.5s ease-in-out infinite;
+  }
+
+  @keyframes mascot-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .mascot.working { animation: mascot-work 1.2s ease-in-out infinite; }
+  @keyframes mascot-work {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-6px) scale(1.05); }
+  }
+
+  .status-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--sub);
+    letter-spacing: 0.5px;
+    margin-bottom: 24px;
+    padding: 8px 20px;
+    border-radius: 20px;
+    display: inline-block;
+    transition: background var(--transition), color var(--transition);
+  }
+
+  .status-label.work {
+    background: var(--work-light);
+    color: var(--work);
+  }
+
+  .status-label.rest {
+    background: var(--rest-light);
+    color: var(--rest);
+  }
+
+  /* 타이머 링 */
+  .timer-ring-wrapper {
+    position: relative;
+    width: 240px;
+    height: 240px;
+    margin: 0 auto 32px;
+  }
+
+  .timer-ring {
+    transform: rotate(-90deg);
+    width: 240px;
+    height: 240px;
+  }
+
+  .ring-bg {
+    fill: none;
+    stroke: var(--ring-bg);
+    stroke-width: 10;
+  }
+
+  .ring-progress {
+    fill: none;
+    stroke: var(--work);
+    stroke-width: 10;
+    stroke-linecap: round;
+    transition: stroke 0.5s ease, stroke-dashoffset 0.3s linear;
+  }
+
+  .ring-progress.rest-mode {
+    stroke: var(--rest);
+  }
+
+  .timer-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 52px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    font-variant-numeric: tabular-nums;
+    transition: color var(--transition);
+  }
+
+  .timer-text.work { color: var(--work); }
+  .timer-text.rest { color: var(--rest); }
+
+  /* 컨트롤 버튼 */
+  .controls {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 36px;
+  }
+
+  .btn {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.2s;
+    position: relative;
+  }
+
+  .btn:active { transform: scale(0.92); }
+
+  .btn-play {
+    background: var(--work);
+    color: white;
+    box-shadow: 0 4px 14px oklch(0.62 0.19 6 / 0.35);
+    width: 64px;
+    height: 64px;
+    font-size: 28px;
+  }
+
+  .btn-play.rest-mode {
+    background: var(--rest);
+    box-shadow: 0 4px 14px oklch(0.62 0.15 215 / 0.35);
+  }
+
+  .btn-secondary {
+    background: var(--surface);
+    color: var(--sub);
+    box-shadow: 0 2px 8px oklch(0 0 0 / 0.08);
+  }
+
+  .btn-secondary:hover { color: var(--text); }
+
+  .btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  /* 설정 영역 */
+  .settings-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--sub);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 20px;
+    transition: background 0.2s, color 0.2s;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .settings-toggle:hover {
+    background: oklch(0.92 0.02 6 / 0.5);
+    color: var(--text);
+  }
+
+  .settings-panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1), margin 0.45s;
+    margin-top: 0;
+  }
+
+  .settings-panel.open {
+    max-height: 240px;
+    margin-top: 20px;
+  }
+
+  .settings-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .settings-row:last-child { margin-bottom: 0; }
+
+  .settings-label {
+    font-size: 14px;
+    font-weight: 500;
+    width: 60px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .time-input-group {
+    display: flex;
+    align-items: center;
+    background: var(--bg);
+    border-radius: 16px;
+    padding: 4px;
+    gap: 2px;
+  }
+
+  .time-input {
+    width: 52px;
+    padding: 10px 6px;
+    border: none;
+    background: var(--surface);
+    border-radius: 12px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: inherit;
+    color: var(--text);
+    outline: none;
+    transition: box-shadow 0.2s;
+  }
+
+  .time-input:focus {
+    box-shadow: 0 0 0 2px var(--work);
+  }
+
+  .time-sep {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--sub);
+    padding: 0 2px;
+  }
+
+  .btn-apply {
+    background: var(--text);
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: opacity 0.2s, transform 0.15s;
+  }
+
+  .btn-apply:active { transform: scale(0.96); }
+  .btn-apply:hover { opacity: 0.85; }
+
+  /* 세션 카운터 */
+  .session-counter {
+    margin-top: 24px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .session-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--ring-bg);
+    transition: background 0.3s, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .session-dot.done {
+    background: var(--work);
+    transform: scale(1.15);
+  }
+
+  @media (max-width: 440px) {
+    .container { padding: 36px 24px 32px; border-radius: 32px; }
+    .timer-ring-wrapper, .timer-ring { width: 200px; height: 200px; }
+    .timer-text { font-size: 44px; }
+    .btn { width: 48px; height: 48px; font-size: 20px; }
+    .btn-play { width: 56px; height: 56px; font-size: 24px; }
+    .lang-switcher { top: 14px; right: 16px; }
+    .lang-btn { padding: 4px 8px; font-size: 12px; }
+  }
+
+  /* 파티클 효과 */
+  .particle {
+    position: fixed;
+    pointer-events: none;
+    font-size: 20px;
+    animation: particle-up 1.2s ease-out forwards;
+    z-index: 100;
+  }
+
+  @keyframes particle-up {
+    0% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
+    100% { opacity: 0; transform: translateY(-120px) scale(0.3) rotate(40deg); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- 언어 선택기 -->
+  <div class="lang-switcher">
+    <button class="lang-btn active" data-lang="ko">한</button>
+    <button class="lang-btn" data-lang="en">EN</button>
+    <button class="lang-btn" data-lang="zh">中</button>
+  </div>
+
+  <div class="mascot" id="mascot">🐣</div>
+
+  <div class="status-label work" id="statusLabel">🍅 집중 타임</div>
+
+  <div class="timer-ring-wrapper">
+    <svg class="timer-ring" viewBox="0 0 240 240">
+      <circle class="ring-bg" cx="120" cy="120" r="110"/>
+      <circle class="ring-progress" id="ringProgress" cx="120" cy="120" r="110"
+        stroke-dasharray="691.15" stroke-dashoffset="0"/>
+    </svg>
+    <div class="timer-text work" id="timerText">50:00</div>
+  </div>
+
+  <div class="controls">
+    <button class="btn btn-secondary" id="btnReset" title="리셋" disabled>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+      </svg>
+    </button>
+    <button class="btn btn-play" id="btnPlay" title="시작">
+      <svg id="iconPlay" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+        <polygon points="6,3 20,12 6,21"/>
+      </svg>
+      <svg id="iconPause" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" style="display:none">
+        <rect x="5" y="3" width="5" height="18" rx="1.5"/><rect x="14" y="3" width="5" height="18" rx="1.5"/>
+      </svg>
+    </button>
+    <button class="btn btn-secondary" id="btnSkip" title="다음">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="5 4 15 12 5 20"/><line x1="19" y1="5" x2="19" y2="19"/>
+      </svg>
+    </button>
+  </div>
+
+  <button class="settings-toggle" id="btnSettings">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+    </svg>
+    <span id="settingsLabel">시간 설정</span>
+  </button>
+
+  <div class="settings-panel" id="settingsPanel">
+    <div class="settings-row">
+      <span class="settings-label" id="lblWork">🍅 작업</span>
+      <div class="time-input-group">
+        <input type="number" class="time-input" id="workMin" value="50" min="1" max="120" aria-label="작업 분">
+        <span class="time-sep" id="sepWorkMin">분</span>
+        <input type="number" class="time-input" id="workSec" value="0" min="0" max="59" aria-label="작업 초">
+        <span class="time-sep" id="sepWorkSec">초</span>
+      </div>
+    </div>
+    <div class="settings-row">
+      <span class="settings-label" id="lblRest">☁️ 휴식</span>
+      <div class="time-input-group">
+        <input type="number" class="time-input" id="restMin" value="10" min="1" max="60" aria-label="휴식 분">
+        <span class="time-sep" id="sepRestMin">분</span>
+        <input type="number" class="time-input" id="restSec" value="0" min="0" max="59" aria-label="휴식 초">
+        <span class="time-sep" id="sepRestSec">초</span>
+      </div>
+    </div>
+    <div class="settings-row">
+      <span class="settings-label" id="lblSessions">🔵 세션</span>
+      <div class="time-input-group">
+        <input type="number" class="time-input" id="maxSessions" value="4" min="1" max="12" aria-label="세션 수" style="width:64px">
+        <span class="time-sep" id="sepSessions">회</span>
+      </div>
+    </div>
+    <button class="btn-apply" id="btnApply">적용</button>
+  </div>
+
+  <div class="session-counter" id="sessionCounter"></div>
+</div>
+
+<script>
+  const CIRCUMFERENCE = 2 * Math.PI * 110;
+
+  const $ = (s) => document.querySelector(s);
+  const ringProgress = $('#ringProgress');
+  const timerText = $('#timerText');
+  const statusLabel = $('#statusLabel');
+  const mascot = $('#mascot');
+  const btnPlay = $('#btnPlay');
+  const btnReset = $('#btnReset');
+  const btnSkip = $('#btnSkip');
+  const iconPlay = $('#iconPlay');
+  const iconPause = $('#iconPause');
+  const settingsPanel = $('#settingsPanel');
+  const sessionCounter = $('#sessionCounter');
+
+  ringProgress.style.strokeDasharray = CIRCUMFERENCE;
+  ringProgress.style.strokeDashoffset = '0';
+
+  // ── i18n ──
+  const i18n = {
+    ko: {
+      title: '🍅 집중 타임', titleRest: '☁️ 휴식 타임',
+      settings: '시간 설정', settingsRest: '시간 설정',
+      lblWork: '🍅 작업', lblRest: '☁️ 휴식', lblSessions: '🔵 세션',
+      sepMin: '분', sepSec: '초', sepSessions: '회',
+      btnApply: '적용',
+      alertMin: '최소 1분 이상으로 설정해주세요!',
+      notifWorkTitle: '작업 완료!', notifWorkBody: '휴식 시간이에요~ ☁️',
+      notifRestTitle: '휴식 완료!', notifRestBody: '다시 집중할 시간이에요~ 🍅',
+      docTitleWork: '🍅 {time} - 집중', docTitleRest: '☁️ {time} - 휴식',
+      mascotWork: '🐣', mascotRest: '😴',
+    },
+    en: {
+      title: '🍅 Focus Time', titleRest: '☁️ Break Time',
+      settings: 'Settings', settingsRest: 'Settings',
+      lblWork: '🍅 Work', lblRest: '☁️ Break', lblSessions: '🔵 Sessions',
+      sepMin: 'min', sepSec: 'sec', sepSessions: 'times',
+      btnApply: 'Apply',
+      alertMin: 'Please set at least 1 minute!',
+      notifWorkTitle: 'Work done!', notifWorkBody: 'Time for a break~ ☁️',
+      notifRestTitle: 'Break over!', notifRestBody: 'Time to focus again~ 🍅',
+      docTitleWork: '🍅 {time} - Focus', docTitleRest: '☁️ {time} - Break',
+      mascotWork: '🐣', mascotRest: '😴',
+    },
+    zh: {
+      title: '🍅 专注时间', titleRest: '☁️ 休息时间',
+      settings: '时间设置', settingsRest: '时间设置',
+      lblWork: '🍅 工作', lblRest: '☁️ 休息', lblSessions: '🔵 轮次',
+      sepMin: '分', sepSec: '秒', sepSessions: '次',
+      btnApply: '应用',
+      alertMin: '请至少设置 1 分钟！',
+      notifWorkTitle: '工作完成！', notifWorkBody: '休息一下吧~ ☁️',
+      notifRestTitle: '休息结束！', notifRestBody: '继续专注吧~ 🍅',
+      docTitleWork: '🍅 {time} - 专注', docTitleRest: '☁️ {time} - 休息',
+      mascotWork: '🐣', mascotRest: '😴',
+    },
+  };
+
+  let lang = localStorage.getItem('pomo-lang') || 'ko';
+
+  function t(key) { return i18n[lang][key] || key; }
+
+  function applyLanguage() {
+    document.documentElement.lang = lang;
+    // 언어 버튼
+    document.querySelectorAll('.lang-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.lang === lang);
+    });
+    // 라벨 업데이트
+    $('#settingsLabel').textContent = t('settings');
+    $('#lblWork').textContent = t('lblWork');
+    $('#lblRest').textContent = t('lblRest');
+    $('#lblSessions').textContent = t('lblSessions');
+    $('#sepWorkMin').textContent = t('sepMin');
+    $('#sepWorkSec').textContent = t('sepSec');
+    $('#sepRestMin').textContent = t('sepMin');
+    $('#sepRestSec').textContent = t('sepSec');
+    $('#sepSessions').textContent = t('sepSessions');
+    $('#btnApply').textContent = t('btnApply');
+    // UI 갱신
+    setUIForMode();
+    updateDocTitle();
+  }
+
+  // ── 상태 ──
+  let state = {
+    workDuration: 50 * 60,
+    restDuration: 10 * 60,
+    remaining: 50 * 60,
+    total: 50 * 60,
+    isRunning: false,
+    isWork: true,
+    sessionsCompleted: 0,
+    maxSessions: 4,
+  };
+
+  let intervalId = null;
+
+  // ── UI 업데이트 ──
+  function updateRing(frac) {
+    ringProgress.style.strokeDashoffset = CIRCUMFERENCE * (1 - frac);
+  }
+
+  function formatTime(s) {
+    const m = Math.floor(s / 60);
+    const sec = s % 60;
+    return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+  }
+
+  function updateDocTitle() {
+    const key = state.isWork ? 'docTitleWork' : 'docTitleRest';
+    document.title = t(key).replace('{time}', formatTime(state.remaining));
+  }
+
+  function setUIForMode() {
+    if (state.isWork) {
+      statusLabel.textContent = t('title');
+      statusLabel.className = 'status-label work';
+      timerText.className = 'timer-text work';
+      ringProgress.classList.remove('rest-mode');
+      btnPlay.classList.remove('rest-mode');
+      mascot.textContent = t('mascotWork');
+      mascot.className = state.isRunning ? 'mascot working' : 'mascot';
+    } else {
+      statusLabel.textContent = t('titleRest');
+      statusLabel.className = 'status-label rest';
+      timerText.className = 'timer-text rest';
+      ringProgress.classList.add('rest-mode');
+      btnPlay.classList.add('rest-mode');
+      mascot.textContent = t('mascotRest');
+      mascot.className = 'mascot';
+    }
+  }
+
+  function refreshAll() {
+    timerText.textContent = formatTime(state.remaining);
+    updateRing(state.remaining / state.total);
+    setUIForMode();
+    updateDots();
+    updateButtons();
+    updateDocTitle();
+  }
+
+  function updateButtons() {
+    const hasElapsed = state.remaining !== state.total;
+    btnReset.disabled = !hasElapsed && !state.isRunning;
+    btnSkip.disabled = false;
+
+    if (state.isRunning) {
+      iconPlay.style.display = 'none';
+      iconPause.style.display = '';
+    } else {
+      iconPlay.style.display = '';
+      iconPause.style.display = 'none';
+    }
+  }
+
+  function updateDots() {
+    sessionCounter.innerHTML = '';
+    for (let i = 0; i < state.maxSessions; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'session-dot';
+      if (i < state.sessionsCompleted) dot.classList.add('done');
+      sessionCounter.appendChild(dot);
+    }
+  }
+
+  // ── 타이머 로직 ──
+  function tick() {
+    if (!state.isRunning) return;
+    state.remaining--;
+    refreshAll();
+
+    if (state.remaining <= 0) {
+      completeSession();
+    }
+  }
+
+  function startTimer() {
+    if (state.remaining <= 0) return;
+    state.isRunning = true;
+    intervalId = setInterval(tick, 1000);
+    mascot.className = 'mascot working';
+    updateButtons();
+  }
+
+  function pauseTimer() {
+    state.isRunning = false;
+    clearInterval(intervalId);
+    intervalId = null;
+    mascot.className = 'mascot';
+    updateButtons();
+  }
+
+  function resetTimer() {
+    state.isRunning = false;
+    clearInterval(intervalId);
+    intervalId = null;
+    state.remaining = state.isWork ? state.workDuration : state.restDuration;
+    state.total = state.remaining;
+    mascot.className = 'mascot';
+    refreshAll();
+  }
+
+  function skipSession() {
+    state.isRunning = false;
+    clearInterval(intervalId);
+    intervalId = null;
+    state.remaining = 0;
+    refreshAll();
+    completeSession();
+  }
+
+  function completeSession() {
+    state.isRunning = false;
+    clearInterval(intervalId);
+    intervalId = null;
+
+    if (state.isWork) {
+      state.sessionsCompleted = Math.min(state.sessionsCompleted + 1, state.maxSessions);
+      state.isWork = false;
+      state.remaining = state.restDuration;
+      state.total = state.restDuration;
+      spawnParticles('🎉');
+      showNotification(t('notifWorkTitle'), t('notifWorkBody'));
+    } else {
+      state.isWork = true;
+      state.remaining = state.workDuration;
+      state.total = state.workDuration;
+      if (state.sessionsCompleted >= state.maxSessions) state.sessionsCompleted = 0;
+      spawnParticles('🌸');
+      showNotification(t('notifRestTitle'), t('notifRestBody'));
+    }
+
+    mascot.className = 'mascot';
+    refreshAll();
+  }
+
+  // ── 파티클 효과 ──
+  function spawnParticles(emoji) {
+    const count = 12;
+    const container = document.querySelector('.container');
+    const rect = container.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+
+    for (let i = 0; i < count; i++) {
+      const p = document.createElement('span');
+      p.className = 'particle';
+      p.textContent = emoji;
+      p.style.left = cx + 'px';
+      p.style.top = cy + 'px';
+      p.style.animation = `particle-up ${1 + Math.random() * 0.6}s ease-out forwards`;
+      p.style.animationDelay = Math.random() * 0.25 + 's';
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 2000);
+    }
+  }
+
+  // ── 알림 ──
+  function showNotification(title, body) {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification(title, { body, icon: '🍅' });
+    } else if ('Notification' in window && Notification.permission !== 'denied') {
+      Notification.requestPermission().then(p => {
+        if (p === 'granted') new Notification(title, { body, icon: '🍅' });
+      });
+    }
+  }
+
+  // ── 설정 ──
+  function applySettings() {
+    const wm = parseInt($('#workMin').value) || 0;
+    const ws = parseInt($('#workSec').value) || 0;
+    const rm = parseInt($('#restMin').value) || 0;
+    const rs = parseInt($('#restSec').value) || 0;
+    const ms = parseInt($('#maxSessions').value) || 4;
+
+    const wd = wm * 60 + ws;
+    const rd = rm * 60 + rs;
+
+    if (wd < 60 || rd < 60) {
+      alert(t('alertMin'));
+      return;
+    }
+
+    state.workDuration = wd;
+    state.restDuration = rd;
+    state.maxSessions = Math.max(1, Math.min(12, ms));
+    state.sessionsCompleted = 0;
+
+    if (!state.isRunning) {
+      state.remaining = state.isWork ? state.workDuration : state.restDuration;
+      state.total = state.remaining;
+    }
+
+    settingsPanel.classList.remove('open');
+    refreshAll();
+  }
+
+  function syncInputs() {
+    $('#workMin').value = Math.floor(state.workDuration / 60);
+    $('#workSec').value = state.workDuration % 60;
+    $('#restMin').value = Math.floor(state.restDuration / 60);
+    $('#restSec').value = state.restDuration % 60;
+    $('#maxSessions').value = state.maxSessions;
+  }
+
+  // ── 이벤트 ──
+  btnPlay.addEventListener('click', () => {
+    if (state.isRunning) pauseTimer();
+    else startTimer();
+  });
+
+  btnReset.addEventListener('click', resetTimer);
+  btnSkip.addEventListener('click', skipSession);
+
+  $('#btnSettings').addEventListener('click', () => {
+    syncInputs();
+    settingsPanel.classList.toggle('open');
+  });
+
+  $('#btnApply').addEventListener('click', applySettings);
+
+  // 언어 전환
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      lang = btn.dataset.lang;
+      localStorage.setItem('pomo-lang', lang);
+      applyLanguage();
+    });
+  });
+
+  // 키보드 단축키
+  document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT') return;
+    if (e.code === 'Space') {
+      e.preventDefault();
+      if (state.isRunning) pauseTimer();
+      else startTimer();
+    }
+    if (e.code === 'KeyR' && !e.ctrlKey && !e.metaKey) {
+      e.preventDefault();
+      resetTimer();
+    }
+  });
+
+  // Notification 권한 요청
+  if ('Notification' in window && Notification.permission === 'default') {
+    document.addEventListener('click', function askOnce() {
+      Notification.requestPermission();
+      document.removeEventListener('click', askOnce);
+    }, { once: true });
+  }
+
+  // 초기 렌더
+  applyLanguage();
+  refreshAll();
+  syncInputs();
+</script>
+</body>
+</html>

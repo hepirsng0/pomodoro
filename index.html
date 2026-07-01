@@ -47,9 +47,9 @@
     background: oklch(1 0 0 / 0.75);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border-radius: clamp(28px, 4vw, 48px);
-    padding: clamp(28px, 5vw, 56px) clamp(24px, 4vw, 48px);
-    width: clamp(320px, 60vw, 720px);
+    border-radius: clamp(28px, 4vmin, 48px);
+    padding: clamp(28px, 5vmin, 56px) clamp(24px, 4vmin, 48px);
+    width: clamp(320px, 60vmin, 720px);
     max-width: 94vw;
     box-shadow:
       0 1px 2px oklch(0 0 0 / 0.04),
@@ -62,8 +62,8 @@
   /* 언어 선택기 */
   .lang-switcher {
     position: absolute;
-    top: clamp(12px, 2vw, 24px);
-    right: clamp(14px, 2.5vw, 28px);
+    top: clamp(12px, 2vmin, 24px);
+    right: clamp(14px, 2.5vmin, 28px);
     display: flex;
     gap: 4px;
   }
@@ -71,9 +71,9 @@
   .lang-btn {
     background: none;
     border: 1.5px solid transparent;
-    border-radius: clamp(8px, 1vw, 12px);
-    padding: clamp(4px, 0.7vw, 8px) clamp(6px, 1vw, 12px);
-    font-size: clamp(11px, 1.4vw, 14px);
+    border-radius: clamp(8px, 1vmin, 12px);
+    padding: clamp(4px, 0.7vmin, 8px) clamp(6px, 1vmin, 12px);
+    font-size: clamp(11px, 1.4vmin, 14px);
     font-weight: 600;
     cursor: pointer;
     color: var(--sub);
@@ -94,7 +94,7 @@
 
   /* 귀여운 캐릭터 */
   .mascot {
-    font-size: clamp(48px, 9vw, 90px);
+    font-size: clamp(48px, 9vmin, 90px);
     line-height: 1;
     margin-bottom: 8px;
     margin-top: 8px;
@@ -113,12 +113,12 @@
   }
 
   .status-label {
-    font-size: clamp(13px, 1.6vw, 16px);
+    font-size: clamp(13px, 1.6vmin, 16px);
     font-weight: 500;
     color: var(--sub);
     letter-spacing: 0.5px;
-    margin-bottom: clamp(18px, 2.5vw, 28px);
-    padding: clamp(6px, 0.9vw, 10px) clamp(16px, 2vw, 24px);
+    margin-bottom: clamp(18px, 2.5vmin, 28px);
+    padding: clamp(6px, 0.9vmin, 10px) clamp(16px, 2vmin, 24px);
     border-radius: 20px;
     display: inline-block;
     transition: background var(--transition), color var(--transition);
@@ -137,9 +137,9 @@
   /* 타이머 링 */
   .timer-ring-wrapper {
     position: relative;
-    width: clamp(180px, 40vw, 380px);
-    height: clamp(180px, 40vw, 380px);
-    margin: 0 auto clamp(16px, 3vw, 32px);
+    width: clamp(180px, 40vmin, 380px);
+    height: clamp(180px, 40vmin, 380px);
+    margin: 0 auto clamp(16px, 3vmin, 32px);
   }
 
   .timer-ring {
@@ -171,7 +171,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: clamp(40px, 9vw, 72px);
+    font-size: clamp(40px, 9vmin, 72px);
     font-weight: 700;
     letter-spacing: -1px;
     font-variant-numeric: tabular-nums;
@@ -184,18 +184,18 @@
   /* 컨트롤 버튼 */
   .controls {
     display: flex;
-    gap: clamp(10px, 1.5vw, 16px);
+    gap: clamp(10px, 1.5vmin, 16px);
     justify-content: center;
-    margin-bottom: clamp(24px, 4vw, 40px);
+    margin-bottom: clamp(24px, 4vmin, 40px);
   }
 
   .btn {
-    width: clamp(44px, 7vw, 72px);
-    height: clamp(44px, 7vw, 72px);
+    width: clamp(44px, 7vmin, 72px);
+    height: clamp(44px, 7vmin, 72px);
     border-radius: 50%;
     border: none;
     cursor: pointer;
-    font-size: clamp(20px, 3vw, 28px);
+    font-size: clamp(20px, 3vmin, 28px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -209,9 +209,9 @@
     background: var(--work);
     color: white;
     box-shadow: 0 4px 14px oklch(0.62 0.19 6 / 0.35);
-    width: clamp(52px, 8vw, 80px);
-    height: clamp(52px, 8vw, 80px);
-    font-size: clamp(24px, 3.5vw, 34px);
+    width: clamp(52px, 8vmin, 80px);
+    height: clamp(52px, 8vmin, 80px);
+    font-size: clamp(24px, 3.5vmin, 34px);
   }
 
   .btn-play.rest-mode {
@@ -238,9 +238,9 @@
     border: none;
     cursor: pointer;
     color: var(--sub);
-    font-size: clamp(12px, 1.5vw, 14px);
+    font-size: clamp(12px, 1.5vmin, 14px);
     font-weight: 500;
-    padding: clamp(6px, 0.9vw, 10px) clamp(14px, 2vw, 20px);
+    padding: clamp(6px, 0.9vmin, 10px) clamp(14px, 2vmin, 20px);
     border-radius: 20px;
     transition: background 0.2s, color 0.2s;
     font-family: inherit;
@@ -263,23 +263,23 @@
 
   .settings-panel.open {
     max-height: 240px;
-    margin-top: clamp(14px, 2vw, 24px);
+    margin-top: clamp(14px, 2vmin, 24px);
   }
 
   .settings-row {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: clamp(8px, 1.2vw, 12px);
-    margin-bottom: clamp(10px, 1.5vw, 16px);
+    gap: clamp(8px, 1.2vmin, 12px);
+    margin-bottom: clamp(10px, 1.5vmin, 16px);
   }
 
   .settings-row:last-child { margin-bottom: 0; }
 
   .settings-label {
-    font-size: clamp(12px, 1.5vw, 15px);
+    font-size: clamp(12px, 1.5vmin, 15px);
     font-weight: 500;
-    width: clamp(48px, 7vw, 68px);
+    width: clamp(48px, 7vmin, 68px);
     text-align: right;
     flex-shrink: 0;
   }
@@ -288,19 +288,19 @@
     display: flex;
     align-items: center;
     background: var(--bg);
-    border-radius: clamp(12px, 2vw, 18px);
-    padding: clamp(3px, 0.5vw, 5px);
+    border-radius: clamp(12px, 2vmin, 18px);
+    padding: clamp(3px, 0.5vmin, 5px);
     gap: 2px;
   }
 
   .time-input {
-    width: clamp(40px, 6vw, 56px);
-    padding: clamp(6px, 1.2vw, 12px) clamp(4px, 0.8vw, 8px);
+    width: clamp(40px, 6vmin, 56px);
+    padding: clamp(6px, 1.2vmin, 12px) clamp(4px, 0.8vmin, 8px);
     border: none;
     background: var(--surface);
-    border-radius: clamp(10px, 1.5vw, 14px);
+    border-radius: clamp(10px, 1.5vmin, 14px);
     text-align: center;
-    font-size: clamp(14px, 1.8vw, 17px);
+    font-size: clamp(14px, 1.8vmin, 17px);
     font-weight: 600;
     font-family: inherit;
     color: var(--text);
@@ -313,7 +313,7 @@
   }
 
   .time-sep {
-    font-size: clamp(13px, 1.6vw, 16px);
+    font-size: clamp(13px, 1.6vmin, 16px);
     font-weight: 600;
     color: var(--sub);
     padding: 0 2px;
@@ -323,9 +323,9 @@
     background: var(--text);
     color: white;
     border: none;
-    padding: clamp(8px, 1.2vw, 12px) clamp(14px, 2vw, 22px);
-    border-radius: clamp(12px, 1.5vw, 16px);
-    font-size: clamp(12px, 1.4vw, 14px);
+    padding: clamp(8px, 1.2vmin, 12px) clamp(14px, 2vmin, 22px);
+    border-radius: clamp(12px, 1.5vmin, 16px);
+    font-size: clamp(12px, 1.4vmin, 14px);
     font-weight: 600;
     cursor: pointer;
     font-family: inherit;
@@ -337,16 +337,16 @@
 
   /* 세션 카운터 */
   .session-counter {
-    margin-top: clamp(18px, 3vw, 28px);
+    margin-top: clamp(18px, 3vmin, 28px);
     display: flex;
-    gap: clamp(8px, 1.2vw, 12px);
+    gap: clamp(8px, 1.2vmin, 12px);
     justify-content: center;
     flex-wrap: wrap;
   }
 
   .session-dot {
-    width: clamp(10px, 1.5vw, 14px);
-    height: clamp(10px, 1.5vw, 14px);
+    width: clamp(10px, 1.5vmin, 14px);
+    height: clamp(10px, 1.5vmin, 14px);
     border-radius: 50%;
     background: var(--ring-bg);
     transition: background 0.3s, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -403,20 +403,20 @@
 
   <div class="controls">
     <button class="btn btn-secondary" id="btnReset" title="리셋" disabled>
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:clamp(18px,2.5vw,26px);height:clamp(18px,2.5vw,26px);">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:clamp(18px,2.5vmin,26px);height:clamp(18px,2.5vmin,26px);">
         <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
       </svg>
     </button>
     <button class="btn btn-play" id="btnPlay" title="시작">
-      <svg id="iconPlay" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" style="width:clamp(22px,3vw,34px);height:clamp(22px,3vw,34px);">
+      <svg id="iconPlay" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" style="width:clamp(22px,3vmin,34px);height:clamp(22px,3vmin,34px);">
         <polygon points="6,3 20,12 6,21"/>
       </svg>
-      <svg id="iconPause" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" style="display:none;width:clamp(22px,3vw,34px);height:clamp(22px,3vw,34px);">
+      <svg id="iconPause" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" style="display:none;width:clamp(22px,3vmin,34px);height:clamp(22px,3vmin,34px);">
         <rect x="5" y="3" width="5" height="18" rx="1.5"/><rect x="14" y="3" width="5" height="18" rx="1.5"/>
       </svg>
     </button>
     <button class="btn btn-secondary" id="btnSkip" title="다음">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:clamp(18px,2.5vw,26px);height:clamp(18px,2.5vw,26px);">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:clamp(18px,2.5vmin,26px);height:clamp(18px,2.5vmin,26px);">
         <polygon points="5 4 15 12 5 20"/><line x1="19" y1="5" x2="19" y2="19"/>
       </svg>
     </button>

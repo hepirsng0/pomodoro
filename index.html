@@ -9,6 +9,7 @@
 <meta property="og:description" content="Free customizable Pomodoro timer in 3 languages. 50min work + 10min break by default. Cute &amp; productive!">
 <meta property="og:type" content="website">
 <meta name="robots" content="index, follow">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍅</text></svg>">
 <title>Pomodoro Timer - Free Online Focus Timer | 뽀모도로 타이머 | 番茄钟</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&family=Nunito:wght@400;600;700&display=swap');
@@ -262,7 +263,7 @@
   }
 
   .settings-panel.open {
-    max-height: 240px;
+    max-height: 300px;
     margin-top: clamp(14px, 2vmin, 24px);
   }
 
@@ -317,6 +318,25 @@
     font-weight: 600;
     color: var(--sub);
     padding: 0 2px;
+  }
+
+  .sound-select {
+    padding: clamp(6px, 1.2vmin, 10px) clamp(8px, 1.4vmin, 14px);
+    border: none;
+    background: var(--surface);
+    border-radius: clamp(10px, 1.5vmin, 14px);
+    font-size: clamp(12px, 1.5vmin, 15px);
+    font-weight: 600;
+    font-family: inherit;
+    color: var(--text);
+    cursor: pointer;
+    outline: none;
+    transition: box-shadow 0.2s;
+    min-width: clamp(110px, 18vmin, 150px);
+  }
+
+  .sound-select:focus {
+    box-shadow: 0 0 0 2px var(--work);
   }
 
   .btn-apply {
@@ -455,6 +475,10 @@
         <span class="time-sep" id="sepSessions">회</span>
       </div>
     </div>
+    <div class="settings-row">
+      <span class="settings-label" id="lblSound">🔔 소리</span>
+      <select class="sound-select" id="soundSelect"></select>
+    </div>
     <button class="btn-apply" id="btnApply">적용</button>
   </div>
 
@@ -491,7 +515,7 @@
       alertMin: '최소 1분 이상으로 설정해주세요!',
       notifWorkTitle: '작업 완료!', notifWorkBody: '휴식 시간이에요~ ☁️',
       notifRestTitle: '휴식 완료!', notifRestBody: '다시 집중할 시간이에요~ 🍅',
-      docTitleWork: '🍅 {time} - 집중', docTitleRest: '☁️ {time} - 휴식',
+      docTitleWork: 'Pomomo🍅', docTitleRest: 'Pomomo🍅',
       mascotWork: '🐣', mascotRest: '😴',
     },
     en: {
@@ -503,7 +527,7 @@
       alertMin: 'Please set at least 1 minute!',
       notifWorkTitle: 'Work done!', notifWorkBody: 'Time for a break~ ☁️',
       notifRestTitle: 'Break over!', notifRestBody: 'Time to focus again~ 🍅',
-      docTitleWork: '🍅 {time} - Focus', docTitleRest: '☁️ {time} - Break',
+      docTitleWork: 'Pomomo🍅', docTitleRest: 'Pomomo🍅',
       mascotWork: '🐣', mascotRest: '😴',
     },
     zh: {
@@ -515,7 +539,7 @@
       alertMin: '请至少设置 1 分钟！',
       notifWorkTitle: '工作完成！', notifWorkBody: '休息一下吧~ ☁️',
       notifRestTitle: '休息结束！', notifRestBody: '继续专注吧~ 🍅',
-      docTitleWork: '🍅 {time} - 专注', docTitleRest: '☁️ {time} - 休息',
+      docTitleWork: 'Pomomo🍅', docTitleRest: 'Pomomo🍅',
       mascotWork: '🐣', mascotRest: '😴',
     },
   };
@@ -541,6 +565,7 @@
     $('#sepRestSec').textContent = t('sepSec');
     $('#sepSessions').textContent = t('sepSessions');
     $('#btnApply').textContent = t('btnApply');
+    populateSoundSelect();
     // UI 갱신
     setUIForMode();
     updateDocTitle();
@@ -559,6 +584,7 @@
   };
 
   let intervalId = null;
+  let endTime = null;
 
   // ── UI 업데이트 ──
   function updateRing(frac) {
@@ -631,10 +657,10 @@
 
   // ── 타이머 로직 ──
   function tick() {
-    if (!state.isRunning) return;
-    state.remaining--;
+    if (!state.isRunning || !endTime) return;
+    const now = Date.now();
+    state.remaining = Math.max(0, Math.round((endTime - now) / 1000));
     refreshAll();
-
     if (state.remaining <= 0) {
       completeSession();
     }
@@ -643,7 +669,8 @@
   function startTimer() {
     if (state.remaining <= 0) return;
     state.isRunning = true;
-    intervalId = setInterval(tick, 1000);
+    endTime = Date.now() + state.remaining * 1000;
+    intervalId = setInterval(tick, 200);
     mascot.className = 'mascot working';
     updateButtons();
   }
@@ -652,6 +679,10 @@
     state.isRunning = false;
     clearInterval(intervalId);
     intervalId = null;
+    if (endTime) {
+      state.remaining = Math.max(0, Math.round((endTime - Date.now()) / 1000));
+    }
+    endTime = null;
     mascot.className = 'mascot';
     updateButtons();
   }
@@ -660,6 +691,7 @@
     state.isRunning = false;
     clearInterval(intervalId);
     intervalId = null;
+    endTime = null;
     state.remaining = state.isWork ? state.workDuration : state.restDuration;
     state.total = state.remaining;
     mascot.className = 'mascot';
@@ -670,6 +702,7 @@
     state.isRunning = false;
     clearInterval(intervalId);
     intervalId = null;
+    endTime = null;
     state.remaining = 0;
     refreshAll();
     completeSession();
@@ -679,6 +712,7 @@
     state.isRunning = false;
     clearInterval(intervalId);
     intervalId = null;
+    endTime = null;
 
     if (state.isWork) {
       state.sessionsCompleted = Math.min(state.sessionsCompleted + 1, state.maxSessions);
@@ -721,8 +755,54 @@
     }
   }
 
-  // ── 알림 ──
+  // ── 알림 소리 ──
+  const soundNames = {
+    beep:    { ko:'기본 삑',   en:'Basic Beep',   zh:'基础提示' },
+    chirp:   { ko:'새소리',    en:'Chirp',        zh:'鸟鸣' },
+    chime:   { ko:'윈드차임',  en:'Wind Chime',   zh:'风铃' },
+    dingdong:{ ko:'딩동',      en:'Ding Dong',    zh:'叮咚' },
+    retro:   { ko:'레트로',    en:'Retro',        zh:'复古' },
+    piano:   { ko:'피아노',    en:'Piano',        zh:'钢琴' },
+    soft:    { ko:'부드럽게',  en:'Soft',         zh:'柔和' },
+    cheer:   { ko:'경쾌 알람', en:'Cheerful',     zh:'轻快闹铃' },
+    robot:   { ko:'로봇',      en:'Robot',        zh:'机器人' },
+    giggle:  { ko:'까르르',    en:'Giggle',       zh:'咯咯笑' },
+  };
+
+  const soundPlayers = {
+    beep: () => { const c=new AudioContext(); const o=c.createOscillator(); const g=c.createGain(); o.connect(g);g.connect(c.destination);o.frequency.value=880;o.type='sine';g.gain.setValueAtTime(.3,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.5);o.start();o.stop(c.currentTime+.5);const o2=c.createOscillator();const g2=c.createGain();o2.connect(g2);g2.connect(c.destination);o2.frequency.value=1320;o2.type='sine';g2.gain.setValueAtTime(.2,c.currentTime+.15);g2.gain.exponentialRampToValueAtTime(.001,c.currentTime+.65);o2.start(c.currentTime+.15);o2.stop(c.currentTime+.65); },
+    chirp: () => { const c=new AudioContext();[800,1100,1400,1700,2000].forEach((f,i)=>{const o=c.createOscillator();const g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';const t=c.currentTime+i*.07;g.gain.setValueAtTime(.15,t);g.gain.exponentialRampToValueAtTime(.001,t+.12);o.start(t);o.stop(t+.12);}); },
+    chime: () => { const c=new AudioContext();[523,659,784].forEach((f,i)=>{const o=c.createOscillator();const g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';const t=c.currentTime+i*.25;g.gain.setValueAtTime(.2,t);g.gain.exponentialRampToValueAtTime(.001,t+.6);o.start(t);o.stop(t+.6);}); },
+    dingdong: () => { const c=new AudioContext();[800,640].forEach((f,i)=>{const o=c.createOscillator();const g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f*i===0?800:640;o.type='sine';const t=c.currentTime+i*.18;g.gain.setValueAtTime(.25,t);g.gain.exponentialRampToValueAtTime(.001,t+.25);o.start(t);o.stop(t+.25);}); },
+    retro: () => { const c=new AudioContext();[523,659,784,1047].forEach((f,i)=>{const o=c.createOscillator();const g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='square';const t=c.currentTime+i*.1;g.gain.setValueAtTime(.12,t);g.gain.exponentialRampToValueAtTime(.001,t+.1);o.start(t);o.stop(t+.1);}); },
+    piano: () => { const c=new AudioContext();[523,659,784].forEach(f=>{const o=c.createOscillator();const g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.18,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.7);o.start();o.stop(c.currentTime+.7);}); },
+    soft: () => { const c=new AudioContext();const o=c.createOscillator();const g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=660;o.type='sine';g.gain.setValueAtTime(.15,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.8);o.start();o.stop(c.currentTime+.8); },
+    cheer: () => { const c=new AudioContext();[660,784,880,1047,880,1047].forEach((f,i)=>{const o=c.createOscillator();const g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';const t=c.currentTime+i*.08;g.gain.setValueAtTime(.14,t);g.gain.exponentialRampToValueAtTime(.001,t+.1);o.start(t);o.stop(t+.1);}); },
+    robot: () => { const c=new AudioContext();[200,300,200,400,200].forEach((f,i)=>{const o=c.createOscillator();const g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sawtooth';const t=c.currentTime+i*.12;g.gain.setValueAtTime(.1,t);g.gain.exponentialRampToValueAtTime(.001,t+.12);o.start(t);o.stop(t+.12);}); },
+    giggle: () => { const c=new AudioContext();[600,720,840,960,600,720].forEach((f,i)=>{const o=c.createOscillator();const g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';const t=c.currentTime+i*.05;g.gain.setValueAtTime(.12,t);g.gain.exponentialRampToValueAtTime(.001,t+.08);o.start(t);o.stop(t+.08);}); },
+  };
+
+  let selectedSound = localStorage.getItem('pomo-sound') || 'beep';
+
+  function populateSoundSelect() {
+    const sel = $('#soundSelect');
+    sel.innerHTML = '';
+    Object.keys(soundNames).forEach(key => {
+      const opt = document.createElement('option');
+      opt.value = key;
+      opt.textContent = soundNames[key][lang];
+      if (key === selectedSound) opt.selected = true;
+      sel.appendChild(opt);
+    });
+  }
+
+  function playSound() {
+    try { (soundPlayers[selectedSound] || soundPlayers.beep)(); }
+    catch(e) { /* 조용히 실패 */ }
+  }
+
   function showNotification(title, body) {
+    playSound();
     if ('Notification' in window && Notification.permission === 'granted') {
       new Notification(title, { body, icon: '🍅' });
     } else if ('Notification' in window && Notification.permission !== 'denied') {
@@ -817,10 +897,18 @@
     }, { once: true });
   }
 
+  // 사운드 선택
+  $('#soundSelect').addEventListener('change', () => {
+    selectedSound = $('#soundSelect').value;
+    localStorage.setItem('pomo-sound', selectedSound);
+    playSound(); // 미리듣기
+  });
+
   // 초기 렌더
   applyLanguage();
   refreshAll();
   syncInputs();
+  populateSoundSelect();
 </script>
 </body>
 </html>

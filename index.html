@@ -47,9 +47,10 @@
     background: oklch(1 0 0 / 0.75);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border-radius: 40px;
-    padding: 48px 40px 40px;
-    width: min(420px, 94vw);
+    border-radius: clamp(28px, 4vw, 48px);
+    padding: clamp(28px, 5vw, 56px) clamp(24px, 4vw, 48px);
+    width: clamp(320px, 55vw, 600px);
+    max-width: 94vw;
     box-shadow:
       0 1px 2px oklch(0 0 0 / 0.04),
       0 4px 16px oklch(0 0 0 / 0.06),
@@ -61,8 +62,8 @@
   /* 언어 선택기 */
   .lang-switcher {
     position: absolute;
-    top: 20px;
-    right: 24px;
+    top: clamp(12px, 2vw, 24px);
+    right: clamp(14px, 2.5vw, 28px);
     display: flex;
     gap: 4px;
   }
@@ -70,9 +71,9 @@
   .lang-btn {
     background: none;
     border: 1.5px solid transparent;
-    border-radius: 10px;
-    padding: 6px 10px;
-    font-size: 13px;
+    border-radius: clamp(8px, 1vw, 12px);
+    padding: clamp(4px, 0.7vw, 8px) clamp(6px, 1vw, 12px);
+    font-size: clamp(11px, 1.4vw, 14px);
     font-weight: 600;
     cursor: pointer;
     color: var(--sub);
@@ -93,7 +94,7 @@
 
   /* 귀여운 캐릭터 */
   .mascot {
-    font-size: 64px;
+    font-size: clamp(48px, 8vw, 80px);
     line-height: 1;
     margin-bottom: 8px;
     margin-top: 8px;
@@ -112,12 +113,12 @@
   }
 
   .status-label {
-    font-size: 14px;
+    font-size: clamp(13px, 1.6vw, 16px);
     font-weight: 500;
     color: var(--sub);
     letter-spacing: 0.5px;
-    margin-bottom: 24px;
-    padding: 8px 20px;
+    margin-bottom: clamp(18px, 2.5vw, 28px);
+    padding: clamp(6px, 0.9vw, 10px) clamp(16px, 2vw, 24px);
     border-radius: 20px;
     display: inline-block;
     transition: background var(--transition), color var(--transition);
@@ -136,15 +137,15 @@
   /* 타이머 링 */
   .timer-ring-wrapper {
     position: relative;
-    width: 240px;
-    height: 240px;
-    margin: 0 auto 32px;
+    width: clamp(180px, 38vw, 320px);
+    height: clamp(180px, 38vw, 320px);
+    margin: 0 auto clamp(16px, 3vw, 32px);
   }
 
   .timer-ring {
     transform: rotate(-90deg);
-    width: 240px;
-    height: 240px;
+    width: 100%;
+    height: 100%;
   }
 
   .ring-bg {
@@ -170,7 +171,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 52px;
+    font-size: clamp(40px, 8vw, 64px);
     font-weight: 700;
     letter-spacing: -1px;
     font-variant-numeric: tabular-nums;
@@ -183,18 +184,18 @@
   /* 컨트롤 버튼 */
   .controls {
     display: flex;
-    gap: 12px;
+    gap: clamp(10px, 1.5vw, 16px);
     justify-content: center;
-    margin-bottom: 36px;
+    margin-bottom: clamp(24px, 4vw, 40px);
   }
 
   .btn {
-    width: 56px;
-    height: 56px;
+    width: clamp(44px, 7vw, 64px);
+    height: clamp(44px, 7vw, 64px);
     border-radius: 50%;
     border: none;
     cursor: pointer;
-    font-size: 24px;
+    font-size: clamp(20px, 3vw, 28px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -208,9 +209,9 @@
     background: var(--work);
     color: white;
     box-shadow: 0 4px 14px oklch(0.62 0.19 6 / 0.35);
-    width: 64px;
-    height: 64px;
-    font-size: 28px;
+    width: clamp(52px, 8vw, 72px);
+    height: clamp(52px, 8vw, 72px);
+    font-size: clamp(24px, 3.5vw, 32px);
   }
 
   .btn-play.rest-mode {
@@ -237,9 +238,9 @@
     border: none;
     cursor: pointer;
     color: var(--sub);
-    font-size: 13px;
+    font-size: clamp(12px, 1.5vw, 14px);
     font-weight: 500;
-    padding: 8px 16px;
+    padding: clamp(6px, 0.9vw, 10px) clamp(14px, 2vw, 20px);
     border-radius: 20px;
     transition: background 0.2s, color 0.2s;
     font-family: inherit;
@@ -262,23 +263,23 @@
 
   .settings-panel.open {
     max-height: 240px;
-    margin-top: 20px;
+    margin-top: clamp(14px, 2vw, 24px);
   }
 
   .settings-row {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    margin-bottom: 14px;
+    gap: clamp(8px, 1.2vw, 12px);
+    margin-bottom: clamp(10px, 1.5vw, 16px);
   }
 
   .settings-row:last-child { margin-bottom: 0; }
 
   .settings-label {
-    font-size: 14px;
+    font-size: clamp(12px, 1.5vw, 15px);
     font-weight: 500;
-    width: 60px;
+    width: clamp(48px, 7vw, 68px);
     text-align: right;
     flex-shrink: 0;
   }
@@ -287,19 +288,19 @@
     display: flex;
     align-items: center;
     background: var(--bg);
-    border-radius: 16px;
-    padding: 4px;
+    border-radius: clamp(12px, 2vw, 18px);
+    padding: clamp(3px, 0.5vw, 5px);
     gap: 2px;
   }
 
   .time-input {
-    width: 52px;
-    padding: 10px 6px;
+    width: clamp(40px, 6vw, 56px);
+    padding: clamp(6px, 1.2vw, 12px) clamp(4px, 0.8vw, 8px);
     border: none;
     background: var(--surface);
-    border-radius: 12px;
+    border-radius: clamp(10px, 1.5vw, 14px);
     text-align: center;
-    font-size: 16px;
+    font-size: clamp(14px, 1.8vw, 17px);
     font-weight: 600;
     font-family: inherit;
     color: var(--text);
@@ -312,7 +313,7 @@
   }
 
   .time-sep {
-    font-size: 15px;
+    font-size: clamp(13px, 1.6vw, 16px);
     font-weight: 600;
     color: var(--sub);
     padding: 0 2px;
@@ -322,9 +323,9 @@
     background: var(--text);
     color: white;
     border: none;
-    padding: 10px 18px;
-    border-radius: 14px;
-    font-size: 13px;
+    padding: clamp(8px, 1.2vw, 12px) clamp(14px, 2vw, 22px);
+    border-radius: clamp(12px, 1.5vw, 16px);
+    font-size: clamp(12px, 1.4vw, 14px);
     font-weight: 600;
     cursor: pointer;
     font-family: inherit;
@@ -336,16 +337,16 @@
 
   /* 세션 카운터 */
   .session-counter {
-    margin-top: 24px;
+    margin-top: clamp(18px, 3vw, 28px);
     display: flex;
-    gap: 10px;
+    gap: clamp(8px, 1.2vw, 12px);
     justify-content: center;
     flex-wrap: wrap;
   }
 
   .session-dot {
-    width: 12px;
-    height: 12px;
+    width: clamp(10px, 1.5vw, 14px);
+    height: clamp(10px, 1.5vw, 14px);
     border-radius: 50%;
     background: var(--ring-bg);
     transition: background 0.3s, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -356,15 +357,7 @@
     transform: scale(1.15);
   }
 
-  @media (max-width: 440px) {
-    .container { padding: 36px 24px 32px; border-radius: 32px; }
-    .timer-ring-wrapper, .timer-ring { width: 200px; height: 200px; }
-    .timer-text { font-size: 44px; }
-    .btn { width: 48px; height: 48px; font-size: 20px; }
-    .btn-play { width: 56px; height: 56px; font-size: 24px; }
-    .lang-switcher { top: 14px; right: 16px; }
-    .lang-btn { padding: 4px 8px; font-size: 12px; }
-  }
+  /* @media 쿼리 제거 — clamp()로 모든 화면 크기 대응 */
 
   /* 파티클 효과 */
   .particle {
@@ -410,20 +403,20 @@
 
   <div class="controls">
     <button class="btn btn-secondary" id="btnReset" title="리셋" disabled>
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:clamp(18px,2.5vw,24px);height:clamp(18px,2.5vw,24px);">
         <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
       </svg>
     </button>
     <button class="btn btn-play" id="btnPlay" title="시작">
-      <svg id="iconPlay" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+      <svg id="iconPlay" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" style="width:clamp(22px,3vw,30px);height:clamp(22px,3vw,30px);">
         <polygon points="6,3 20,12 6,21"/>
       </svg>
-      <svg id="iconPause" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" style="display:none">
+      <svg id="iconPause" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" style="display:none;width:clamp(22px,3vw,30px);height:clamp(22px,3vw,30px);">
         <rect x="5" y="3" width="5" height="18" rx="1.5"/><rect x="14" y="3" width="5" height="18" rx="1.5"/>
       </svg>
     </button>
     <button class="btn btn-secondary" id="btnSkip" title="다음">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:clamp(18px,2.5vw,24px);height:clamp(18px,2.5vw,24px);">
         <polygon points="5 4 15 12 5 20"/><line x1="19" y1="5" x2="19" y2="19"/>
       </svg>
     </button>

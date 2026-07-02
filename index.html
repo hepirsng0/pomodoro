@@ -31,7 +31,7 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    font-family: 'Nunito', 'Noto Sans KR', 'Noto Sans SC', sans-serif;
+    font-family: system-ui, -apple-system, 'Segoe UI', 'Nunito', 'Noto Sans KR', 'Noto Sans SC', sans-serif;
     background: var(--bg);
     background-image:
       radial-gradient(circle at 20% 80%, oklch(0.88 0.056 6 / 0.35) 0%, transparent 50%),
@@ -263,8 +263,14 @@
   }
 
   .settings-panel.open {
-    max-height: 300px;
+    max-height: 320px;
     margin-top: clamp(14px, 2vmin, 24px);
+  }
+
+  .settings-panel:not(.open) input,
+  .settings-panel:not(.open) select,
+  .settings-panel:not(.open) button {
+    visibility: hidden;
   }
 
   .settings-row {
@@ -272,7 +278,7 @@
     align-items: center;
     justify-content: center;
     gap: clamp(8px, 1.2vmin, 12px);
-    margin-bottom: clamp(10px, 1.5vmin, 16px);
+    margin-bottom: clamp(6px, 1vmin, 10px);
   }
 
   .settings-row:last-child { margin-bottom: 0; }
@@ -296,7 +302,7 @@
 
   .time-input {
     width: clamp(40px, 6vmin, 56px);
-    padding: clamp(6px, 1.2vmin, 12px) clamp(4px, 0.8vmin, 8px);
+    padding: clamp(4px, 0.8vmin, 8px) clamp(3px, 0.6vmin, 6px);
     border: none;
     background: var(--surface);
     border-radius: clamp(10px, 1.5vmin, 14px);
@@ -307,6 +313,7 @@
     color: var(--text);
     outline: none;
     transition: box-shadow 0.2s;
+    user-select: auto;
   }
 
   .time-input:focus {
@@ -333,6 +340,7 @@
     outline: none;
     transition: box-shadow 0.2s;
     min-width: clamp(110px, 18vmin, 150px);
+    user-select: auto;
   }
 
   .sound-select:focus {
@@ -422,12 +430,12 @@
   </div>
 
   <div class="controls">
-    <button class="btn btn-secondary" id="btnReset" title="리셋" disabled>
+    <button class="btn btn-secondary" id="btnReset" title="리셋" aria-label="리셋" disabled>
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:clamp(18px,2.5vmin,26px);height:clamp(18px,2.5vmin,26px);">
         <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
       </svg>
     </button>
-    <button class="btn btn-play" id="btnPlay" title="시작">
+    <button class="btn btn-play" id="btnPlay" title="시작" aria-label="시작">
       <svg id="iconPlay" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" style="width:clamp(22px,3vmin,34px);height:clamp(22px,3vmin,34px);">
         <polygon points="6,3 20,12 6,21"/>
       </svg>
@@ -435,14 +443,14 @@
         <rect x="5" y="3" width="5" height="18" rx="1.5"/><rect x="14" y="3" width="5" height="18" rx="1.5"/>
       </svg>
     </button>
-    <button class="btn btn-secondary" id="btnSkip" title="다음">
+    <button class="btn btn-secondary" id="btnSkip" title="다음" aria-label="다음">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:clamp(18px,2.5vmin,26px);height:clamp(18px,2.5vmin,26px);">
         <polygon points="5 4 15 12 5 20"/><line x1="19" y1="5" x2="19" y2="19"/>
       </svg>
     </button>
   </div>
 
-  <button class="settings-toggle" id="btnSettings">
+  <button class="settings-toggle" id="btnSettings" aria-label="시간 설정">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
     </svg>
@@ -479,6 +487,7 @@
       <span class="settings-label" id="lblSound">🔔 소리</span>
       <select class="sound-select" id="soundSelect"></select>
     </div>
+    <button class="btn-apply" id="btnNotif" style="display:none;">알림 켜기</button>
     <button class="btn-apply" id="btnApply">적용</button>
   </div>
 
@@ -515,8 +524,15 @@
       alertMin: '최소 1분 이상으로 설정해주세요!',
       notifWorkTitle: '작업 완료!', notifWorkBody: '휴식 시간이에요~ ☁️',
       notifRestTitle: '휴식 완료!', notifRestBody: '다시 집중할 시간이에요~ 🍅',
-      docTitleWork: 'Pomomo🍅', docTitleRest: 'Pomomo🍅',
+      docTitleWork: '{time} Pomomo🍅', docTitleRest: '{time} Pomomo🍅',
       mascotWork: '🐣', mascotRest: '😴',
+      lblSound: '🔔 소리', btnSettings: '⚙️ 시간 설정',
+      titleReset: '리셋', titlePlay: '시작', titlePause: '일시정지', titleSkip: '다음',
+      notifBtn: '🔔 알림 켜기', notifOn: '🔔 알림 켜짐 ✅',
+      notifDenied: '🚫 알림 차단됨',
+      ariaWorkMin: '작업 분', ariaWorkSec: '작업 초',
+      ariaRestMin: '휴식 분', ariaRestSec: '휴식 초',
+      ariaSessions: '세션 수',
     },
     en: {
       title: '🍅 Focus Time', titleRest: '☁️ Break Time',
@@ -527,8 +543,15 @@
       alertMin: 'Please set at least 1 minute!',
       notifWorkTitle: 'Work done!', notifWorkBody: 'Time for a break~ ☁️',
       notifRestTitle: 'Break over!', notifRestBody: 'Time to focus again~ 🍅',
-      docTitleWork: 'Pomomo🍅', docTitleRest: 'Pomomo🍅',
+      docTitleWork: '{time} Pomomo🍅', docTitleRest: '{time} Pomomo🍅',
       mascotWork: '🐣', mascotRest: '😴',
+      lblSound: '🔔 Sound', btnSettings: '⚙️ Settings',
+      titleReset: 'Reset', titlePlay: 'Start', titlePause: 'Pause', titleSkip: 'Skip',
+      notifBtn: '🔔 Enable Notifications', notifOn: '🔔 Notifications ON ✅',
+      notifDenied: '🚫 Notifications blocked',
+      ariaWorkMin: 'Work minutes', ariaWorkSec: 'Work seconds',
+      ariaRestMin: 'Break minutes', ariaRestSec: 'Break seconds',
+      ariaSessions: 'Number of sessions',
     },
     zh: {
       title: '🍅 专注时间', titleRest: '☁️ 休息时间',
@@ -539,8 +562,15 @@
       alertMin: '请至少设置 1 分钟！',
       notifWorkTitle: '工作完成！', notifWorkBody: '休息一下吧~ ☁️',
       notifRestTitle: '休息结束！', notifRestBody: '继续专注吧~ 🍅',
-      docTitleWork: 'Pomomo🍅', docTitleRest: 'Pomomo🍅',
+      docTitleWork: '{time} Pomomo🍅', docTitleRest: '{time} Pomomo🍅',
       mascotWork: '🐣', mascotRest: '😴',
+      lblSound: '🔔 提示音', btnSettings: '⚙️ 设置',
+      titleReset: '重置', titlePlay: '开始', titlePause: '暂停', titleSkip: '跳过',
+      notifBtn: '🔔 开启通知', notifOn: '🔔 通知已开启 ✅',
+      notifDenied: '🚫 通知已阻止',
+      ariaWorkMin: '工作分钟', ariaWorkSec: '工作秒',
+      ariaRestMin: '休息分钟', ariaRestSec: '休息秒',
+      ariaSessions: '轮次数',
     },
   };
 
@@ -556,15 +586,32 @@
     });
     // 라벨 업데이트
     $('#settingsLabel').textContent = t('settings');
+    btnSettings.setAttribute('aria-label', t('btnSettings'));
     $('#lblWork').textContent = t('lblWork');
     $('#lblRest').textContent = t('lblRest');
     $('#lblSessions').textContent = t('lblSessions');
+    $('#lblSound').textContent = t('lblSound');
     $('#sepWorkMin').textContent = t('sepMin');
     $('#sepWorkSec').textContent = t('sepSec');
     $('#sepRestMin').textContent = t('sepMin');
     $('#sepRestSec').textContent = t('sepSec');
     $('#sepSessions').textContent = t('sepSessions');
     $('#btnApply').textContent = t('btnApply');
+    // 버튼 title/aria-label
+    btnReset.title = t('titleReset');
+    btnReset.setAttribute('aria-label', t('titleReset'));
+    btnPlay.title = state.isRunning ? t('titlePause') : t('titlePlay');
+    btnPlay.setAttribute('aria-label', btnPlay.title);
+    btnSkip.title = t('titleSkip');
+    btnSkip.setAttribute('aria-label', t('titleSkip'));
+    // 알림 버튼
+    updateNotifBtn();
+    // 입력 필드 aria-label
+    $('#workMin').setAttribute('aria-label', t('ariaWorkMin'));
+    $('#workSec').setAttribute('aria-label', t('ariaWorkSec'));
+    $('#restMin').setAttribute('aria-label', t('ariaRestMin'));
+    $('#restSec').setAttribute('aria-label', t('ariaRestSec'));
+    $('#maxSessions').setAttribute('aria-label', t('ariaSessions'));
     populateSoundSelect();
     // UI 갱신
     setUIForMode();
@@ -639,9 +686,13 @@
     if (state.isRunning) {
       iconPlay.style.display = 'none';
       iconPause.style.display = '';
+      btnPlay.title = t('titlePause');
+      btnPlay.setAttribute('aria-label', t('titlePause'));
     } else {
       iconPlay.style.display = '';
       iconPause.style.display = 'none';
+      btnPlay.title = t('titlePlay');
+      btnPlay.setAttribute('aria-label', t('titlePlay'));
     }
   }
 
@@ -805,10 +856,6 @@
     playSound();
     if ('Notification' in window && Notification.permission === 'granted') {
       new Notification(title, { body, icon: '🍅' });
-    } else if ('Notification' in window && Notification.permission !== 'denied') {
-      Notification.requestPermission().then(p => {
-        if (p === 'granted') new Notification(title, { body, icon: '🍅' });
-      });
     }
   }
 
@@ -839,6 +886,7 @@
     }
 
     settingsPanel.classList.remove('open');
+    setPanelTabIndex(false);
     refreshAll();
   }
 
@@ -848,6 +896,14 @@
     $('#restMin').value = Math.floor(state.restDuration / 60);
     $('#restSec').value = state.restDuration % 60;
     $('#maxSessions').value = state.maxSessions;
+  }
+
+  // ── 탭 순서 관리 ──
+  function setPanelTabIndex(open) {
+    const val = open ? '0' : '-1';
+    settingsPanel.querySelectorAll('input, select, button').forEach(el => {
+      el.setAttribute('tabindex', val);
+    });
   }
 
   // ── 이벤트 ──
@@ -861,7 +917,8 @@
 
   $('#btnSettings').addEventListener('click', () => {
     syncInputs();
-    settingsPanel.classList.toggle('open');
+    const isOpen = settingsPanel.classList.toggle('open');
+    setPanelTabIndex(isOpen);
   });
 
   $('#btnApply').addEventListener('click', applySettings);
@@ -889,13 +946,36 @@
     }
   });
 
-  // Notification 권한 요청
-  if ('Notification' in window && Notification.permission === 'default') {
-    document.addEventListener('click', function askOnce() {
-      Notification.requestPermission();
-      document.removeEventListener('click', askOnce);
-    }, { once: true });
+  // 알림 권한 버튼
+  function updateNotifBtn() {
+    const btn = $('#btnNotif');
+    if (!('Notification' in window)) {
+      btn.style.display = 'none';
+      return;
+    }
+    if (Notification.permission === 'granted') {
+      btn.textContent = t('notifOn');
+      btn.style.display = 'inline-block';
+      btn.disabled = true;
+      btn.style.opacity = '0.6';
+    } else if (Notification.permission === 'denied') {
+      btn.textContent = t('notifDenied');
+      btn.style.display = 'inline-block';
+      btn.disabled = true;
+      btn.style.opacity = '0.6';
+    } else {
+      btn.textContent = t('notifBtn');
+      btn.style.display = 'inline-block';
+      btn.disabled = false;
+      btn.style.opacity = '1';
+    }
   }
+
+  $('#btnNotif').addEventListener('click', () => {
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission().then(() => updateNotifBtn());
+    }
+  });
 
   // 사운드 선택
   $('#soundSelect').addEventListener('change', () => {
@@ -909,6 +989,7 @@
   refreshAll();
   syncInputs();
   populateSoundSelect();
+  setPanelTabIndex(false);
 </script>
 </body>
 </html>
